@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>China Wok Perú - Pedidos en línea</title>
+
+<!-- Google tag (gtag.js) - REEMPLAZA G-XXXXXXX por tu ID de medición real -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXX', { send_page_view: false });
+</script>
+
+<style>
+  * { box-sizing: border-box; margin:0; padding:0; font-family: Arial, Helvetica, sans-serif; }
+  html,body { background:#EFEAE0; min-height:100%; }
+  .shell { max-width:380px; margin:0 auto; min-height:100vh; background:#FBF3E7; display:flex; flex-direction:column; }
+  header.top { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:#FBF3E7; }
+  header.top .brand { display:flex; align-items:center; gap:8px; }
+  .dot { border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  main { flex:1; padding:0 16px 16px; }
+  .row { display:flex; align-items:center; }
+  .between { display:flex; align-items:center; justify-content:space-between; }
+  .card { background:#fff; border:1px solid rgba(0,0,0,0.07); border-radius:12px; }
+  .pill { border-radius:20px; cursor:pointer; user-select:none; border:none; }
+  .btn { background:#B3202C; color:#FBF3E7; text-align:center; padding:13px; border-radius:10px; font-size:14px; font-weight:bold; border:none; width:100%; cursor:pointer; }
+  .btn:disabled { background:#D9C9B8; cursor:not-allowed; }
+  .btn-ghost { background:#fff; color:#791F1F; border:1px solid #B3202C; }
+  nav.bottom { display:flex; background:#fff; border-top:1px solid rgba(0,0,0,0.08); position:sticky; bottom:0; }
+  nav.bottom a { flex:1; text-align:center; padding:10px 0 8px; font-size:10px; color:#888780; text-decoration:none; position:relative; }
+  nav.bottom a.active { color:#B3202C; font-weight:bold; }
+  nav.bottom .ic { display:block; font-size:16px; margin-bottom:2px; }
+  .badge { position:absolute; top:2px; right:22%; background:#B3202C; color:#fff; font-size:9px; border-radius:10px; padding:1px 5px; }
+  .stepper { display:flex; align-items:center; gap:8px; }
+  .stepper button { width:24px; height:24px; border-radius:50%; border:1px solid #B3202C; background:#fff; color:#B3202C; font-weight:bold; cursor:pointer; font-size:13px; line-height:1; }
+  .cat-tabs { display:flex; gap:8px; margin-bottom:14px; overflow-x:auto; }
+  .cat-tabs button { font-size:12px; font-weight:bold; padding:8px 14px; white-space:nowrap; background:#fff; color:#5F5E5A; }
+  .cat-tabs button.active { background:#B3202C; color:#FBF3E7; }
+  .stepbar { display:flex; justify-content:space-between; margin-bottom:16px; }
+  .stepbar .st { text-align:center; flex:1; }
+  .stepbar .dot2 { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 4px; font-size:13px; font-weight:bold; }
+  a { color:inherit; text-decoration:none; }
+  input[type="radio"] { accent-color: #B3202C; }
+  .empty { text-align:center; color:#888780; font-size:13px; padding:40px 0; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <header class="top">
+    <div class="brand">
+      <div class="dot" style="width:32px;height:32px;background:#B3202C;color:#FBF3E7;font-size:13px;font-weight:bold;">CW</div>
+      <span style="font-size:17px;font-weight:bold;color:#201A18;">China Wok</span>
+    </div>
+    <span style="font-size:12px;color:#5F5E5A;">&#8226; Miraflores</span>
+  </header>
+
+  <main id="app"></main>
+
+  <nav class="bottom" id="bottomNav">
+    <a href="#home" data-route="home"><span class="ic">&#8962;</span>Inicio</a>
+    <a href="#menu" data-route="menu"><span class="ic">&#9776;</span>Menú</a>
+    <a href="#cart" data-route="cart"><span class="ic">&#128722;</span>Carrito<span class="badge" id="cartBadge" style="display:none;">0</span></a>
+    <a href="#tracking" data-route="tracking"><span class="ic">&#128230;</span>Pedido</a>
+  </nav>
+</div>
+
+<script>
+/* ---------- Datos del menú ---------- */
+const MENU = [
+  { id:1, name:"Combo Duo Wok", desc:"2 platos + gaseosa", price:32.90, cat:"combos", color:"#F0997B" },
+  { id:2, name:"Combo Familiar", desc:"4 platos + 2 gaseosas", price:64.90, cat:"combos", color:"#EF9F27" },
+  { id:3, name:"Combo Wantán", desc:"Wantán frito + arroz", price:27.90, cat:"combos", color:"#97C459" },
+  { id:4, name:"Arroz chaufa especial", desc:"Porción individual", price:18.90, cat:"individual", color:"#F0997B" },
+  { id:5, name:"Tallarín saltado", desc:"Porción individual", price:19.90, cat:"individual", color:"#EF9F27" },
+  { id:6, name:"Pollo a la naranja", desc:"Porción individual", price:21.90, cat:"individual", color:"#F09595" },
+  { id:7, name:"Chicha morada", desc:"Vaso 500ml", price:6.50, cat:"bebidas", color:"#AFA9EC" },
+  { id:8, name:"Gaseosa personal", desc:"500ml", price:5.50, cat:"bebidas", color:"#85B7EB" },
+  { id:9, name:"Wantán dulce", desc:"Porción de 6 unidades", price:12.90, cat:"postres", color:"#F4C0D1" },
+];
+const CATS = [ ["combos","Combos"], ["individual","Individual"], ["bebidas","Bebidas"], ["postres","Postres"] ];
+
+/* ---------- Estado (persistido en localStorage porque es un sitio real, no un artifact) ---------- */
+let cart = JSON.parse(localStorage.getItem("cw_cart") || "{}");
+let orderStatus = localStorage.getItem("cw_order_status") || null;
+let activeCat = "combos";
+
+function saveCart(){ localStorage.setItem("cw_cart", JSON.stringify(cart)); updateBadge(); }
+function cartCount(){ return Object.values(cart).reduce((a,b)=>a+b,0); }
+function cartTotal(){ return Object.entries(cart).reduce((sum,[id,qty])=> sum + MENU.find(m=>m.id==id).price*qty, 0); }
+function fmt(n){ return "S/ " + n.toFixed(2); }
+
+function updateBadge(){
+  const badge = document.getElementById("cartBadge");
+  const c = cartCount();
+  if(c > 0){ badge.style.display="inline-block"; badge.textContent = c; } else { badge.style.display="none"; }
+}
+
+function addToCart(id){
+  cart[id] = (cart[id]||0) + 1;
+  saveCart();
+  const item = MENU.find(m=>m.id==id);
+  gtag('event','add_to_cart', { currency:"PEN", value:item.price, items:[{item_id:id, item_name:item.name, price:item.price}] });
+  render();
+}
+function changeQty(id, delta){
+  cart[id] = (cart[id]||0) + delta;
+  if(cart[id] <= 0) delete cart[id];
+  saveCart();
+  render();
+}
+
+/* ---------- Vistas ---------- */
+function viewHome(){
+  return `
+    <div class="card" style="padding:10px 14px;margin:14px 0;">
+      <span style="font-size:13px;color:#888780;">Buscar combos, promociones...</span>
+    </div>
+    <a href="#menu">
+      <div style="background:#B3202C;border-radius:14px;padding:18px;margin-bottom:16px;">
+        <p style="font-size:12px;color:#F0997B;margin-bottom:6px;">PROMO DEL DÍA</p>
+        <p style="font-size:19px;font-weight:bold;color:#FBF3E7;margin-bottom:12px;">Combo Duo Wok</p>
+        <div style="display:inline-block;background:#D4A017;color:#412402;font-size:13px;font-weight:bold;padding:8px 16px;border-radius:10px;">Pedir ahora</div>
+      </div>
+    </a>
+    <div class="between" style="margin-bottom:18px;">
+      ${CATS.map(([key,label])=>`
+        <a href="#menu" onclick="activeCat='${key}'" style="text-align:center;flex:1;">
+          <div class="dot" style="width:46px;height:46px;background:#FAEEDA;color:#854F0B;font-size:15px;font-weight:bold;margin:0 auto 6px;">${label[0]}</div>
+          <span style="font-size:11px;color:#5F5E5A;">${label}</span>
+        </a>`).join("")}
+    </div>
+    <p style="font-size:13px;font-weight:bold;color:#201A18;margin-bottom:10px;">Más pedidos</p>
+    ${MENU.slice(0,2).map(itemCard).join("")}
+  `;
+}
+
+function itemCard(item){
+  const qty = cart[item.id] || 0;
+  return `
+    <div class="card row" style="padding:10px;gap:10px;margin-bottom:10px;">
+      <div style="width:48px;height:48px;border-radius:10px;background:${item.color};flex-shrink:0;"></div>
+      <div style="flex:1;">
+        <p style="font-size:13px;font-weight:bold;color:#201A18;">${item.name}</p>
+        <p style="font-size:11px;color:#888780;margin-top:2px;">${item.desc}</p>
+        <p style="font-size:13px;color:#791F1F;font-weight:bold;margin-top:2px;">${fmt(item.price)}</p>
+      </div>
+      ${qty === 0
+        ? `<button class="dot" style="width:28px;height:28px;background:#B3202C;color:#FBF3E7;font-size:16px;font-weight:bold;border:none;cursor:pointer;" onclick="addToCart(${item.id})">+</button>`
+        : `<div class="stepper"><button onclick="changeQty(${item.id},-1)">-</button><span style="font-size:13px;font-weight:bold;min-width:14px;text-align:center;">${qty}</span><button onclick="changeQty(${item.id},1)">+</button></div>`
+      }
+    </div>`;
+}
+
+function viewMenu(){
+  const items = MENU.filter(m => m.cat === activeCat);
+  return `
+    <p style="font-size:17px;font-weight:bold;color:#201A18;margin:14px 0;">Menú</p>
+    <div class="cat-tabs">
+      ${CATS.map(([key,label])=>`<button class="pill ${key===activeCat?'active':''}" onclick="activeCat='${key}';render();">${label}</button>`).join("")}
+    </div>
+    ${items.map(itemCard).join("")}
+  `;
+}
+
+function viewCart(){
+  const ids = Object.keys(cart);
+  if(ids.length === 0){
+    return `<p style="font-size:17px;font-weight:bold;color:#201A18;margin:14px 0;">Tu pedido</p><div class="empty">Tu carrito está vacío.<br><a href="#menu" style="color:#B3202C;font-weight:bold;">Ver el menú</a></div>`;
+  }
+  const rows = ids.map(id=>{
+    const item = MENU.find(m=>m.id==id); const qty = cart[id];
+    return `<div class="between" style="margin-bottom:10px;">
+      <div><p style="font-size:13px;color:#201A18;">${item.name}</p><p style="font-size:11px;color:#888780;">${fmt(item.price)} c/u</p></div>
+      <div class="stepper">
+        <button onclick="changeQty(${item.id},-1)">-</button>
+        <span style="font-size:13px;font-weight:bold;min-width:14px;text-align:center;">${qty}</span>
+        <button onclick="changeQty(${item.id},1)">+</button>
+      </div>
+    </div>`;
+  }).join("");
+  const subtotal = cartTotal();
+  const envio = 5.00;
+  return `
+    <p style="font-size:17px;font-weight:bold;color:#201A18;margin:14px 0;">Tu pedido (${cartCount()})</p>
+    ${rows}
+    <div style="border-top:1px solid rgba(0,0,0,0.08);padding-top:10px;margin:14px 0 18px;">
+      <div class="between" style="font-size:12px;color:#5F5E5A;margin-bottom:5px;"><span>Subtotal</span><span>${fmt(subtotal)}</span></div>
+      <div class="between" style="font-size:12px;color:#5F5E5A;margin-bottom:5px;"><span>Envío</span><span>${fmt(envio)}</span></div>
+      <div class="between" style="font-size:15px;font-weight:bold;color:#201A18;"><span>Total</span><span>${fmt(subtotal+envio)}</span></div>
+    </div>
+    <button class="btn" onclick="goCheckout()">Continuar al pago</button>
+  `;
+}
+
+function goCheckout(){
+  gtag('event','begin_checkout', { currency:"PEN", value: cartTotal()+5, items: Object.entries(cart).map(([id,qty])=>{ const item=MENU.find(m=>m.id==id); return {item_id:id,item_name:item.name,price:item.price,quantity:qty}; }) });
+  location.hash = "#checkout";
+}
+
+let payMethod = "tarjeta";
+function viewCheckout(){
+  if(Object.keys(cart).length === 0){
+    return `<div class="empty">No tienes productos en tu pedido.<br><a href="#menu" style="color:#B3202C;font-weight:bold;">Ver el menú</a></div>`;
+  }
+  const total = cartTotal()+5;
+  return `
+    <p style="font-size:17px;font-weight:bold;color:#201A18;margin:14px 0;">Pago</p>
+    <p style="font-size:12px;color:#888780;margin-bottom:6px;">Dirección de entrega</p>
+    <div class="card" style="padding:10px 14px;margin-bottom:16px;"><span style="font-size:13px;color:#201A18;">Av. Larco 345, Miraflores</span></div>
+    <p style="font-size:12px;color:#888780;margin-bottom:8px;">Método de pago</p>
+    ${["tarjeta","yape","efectivo"].map(m=>{
+      const labels = {tarjeta:"Tarjeta terminada en 4521", yape:"Yape / Plin", efectivo:"Efectivo contra entrega"};
+      return `<label class="card row" style="padding:10px 14px;gap:10px;margin-bottom:8px;${payMethod===m?'border:2px solid #B3202C;':''}">
+        <input type="radio" name="pay" ${payMethod===m?'checked':''} onchange="payMethod='${m}';render();">
+        <span style="font-size:13px;color:#201A18;">${labels[m]}</span>
+      </label>`;
+    }).join("")}
+    <div class="between" style="margin:16px 0;">
+      <span style="font-size:14px;font-weight:bold;color:#201A18;">Total a pagar</span>
+      <span style="font-size:14px;font-weight:bold;color:#201A18;">${fmt(total)}</span>
+    </div>
+    <button class="btn" onclick="confirmOrder()">Confirmar pedido</button>
+  `;
+}
+
+function confirmOrder(){
+  const total = cartTotal()+5;
+  gtag('event','purchase', { transaction_id: "CW"+Date.now(), currency:"PEN", value: total, payment_type: payMethod, items: Object.entries(cart).map(([id,qty])=>{ const item=MENU.find(m=>m.id==id); return {item_id:id,item_name:item.name,price:item.price,quantity:qty}; }) });
+  orderStatus = "en_camino";
+  localStorage.setItem("cw_order_status", orderStatus);
+  cart = {};
+  saveCart();
+  location.hash = "#tracking";
+}
+
+function viewTracking(){
+  if(!orderStatus){
+    return `<div class="empty">No tienes pedidos en curso.<br><a href="#menu" style="color:#B3202C;font-weight:bold;">Hacer un pedido</a></div>`;
+  }
+  const steps = [["recibido","Recibido"],["preparando","Preparando"],["en_camino","En camino"],["entregado","Entregado"]];
+  const order = ["recibido","preparando","en_camino","entregado"];
+  const currentIdx = order.indexOf(orderStatus);
+  return `
+    <p style="font-size:17px;font-weight:bold;color:#201A18;margin:14px 0;">Tu pedido va en camino</p>
+    <div class="stepbar">
+      ${steps.map(([key,label],i)=>{
+        const done = i < currentIdx, active = i === currentIdx;
+        const bg = done ? "#639922" : active ? "#B3202C" : "#F1EFE8";
+        const fg = done ? "#173404" : active ? "#FBF3E7" : "#888780";
+        return `<div class="st"><div class="dot2" style="background:${bg};color:${fg};">${done?'&#10003;':(i+1)}</div><span style="font-size:9px;color:${active?'#201A18':'#888780'};font-weight:${active?'bold':'normal'};">${label}</span></div>`;
+      }).join("")}
+    </div>
+    <div style="background:#EAF3DE;border-radius:14px;height:170px;margin-bottom:16px;display:flex;align-items:center;justify-content:center;">
+      <span style="font-size:13px;color:#3B6D11;">Mapa en tiempo real</span>
+    </div>
+    ${currentIdx < 3 ? `<button class="btn btn-ghost" style="margin-bottom:10px;" onclick="advanceStatus()">Simular avance del pedido</button>` : ''}
+    ${currentIdx === 3 ? `<button class="btn" onclick="resetOrder()">Hacer un nuevo pedido</button>` : ''}
+  `;
+}
+function advanceStatus(){
+  const order = ["recibido","preparando","en_camino","entregado"];
+  const idx = Math.min(order.indexOf(orderStatus)+1, 3);
+  orderStatus = order[idx];
+  localStorage.setItem("cw_order_status", orderStatus);
+  render();
+}
+function resetOrder(){
+  orderStatus = null;
+  localStorage.removeItem("cw_order_status");
+  location.hash = "#home";
+}
+
+/* ---------- Router ---------- */
+function currentRoute(){ return (location.hash || "#home").replace("#",""); }
+function render(){
+  const route = currentRoute();
+  const views = { home: viewHome, menu: viewMenu, cart: viewCart, checkout: viewCheckout, tracking: viewTracking };
+  document.getElementById("app").innerHTML = (views[route] || viewHome)();
+  document.querySelectorAll("nav.bottom a").forEach(a => a.classList.toggle("active", a.dataset.route === route || (route==="checkout" && a.dataset.route==="cart")));
+  updateBadge();
+  gtag('event','page_view', { page_title: route, page_location: location.href, page_path: "/"+route });
+  window.scrollTo(0,0);
+}
+window.addEventListener("hashchange", render);
+window.addEventListener("DOMContentLoaded", render);
+</script>
+</body>
+</html>
